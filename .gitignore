@@ -17,3 +17,15 @@ Thumbs.db
 *.log
 *.tmp
 *.temp
+
+# Generated data and experiment artifacts
+tmp/
+data/
+artifacts/
+checkpoints/
+models/
+wandb/
+.cache/
+
+# Local course material
+PDF document.pdf
