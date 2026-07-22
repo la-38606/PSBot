@@ -20,11 +20,12 @@ Thumbs.db
 
 # Generated data and experiment artifacts
 tmp/
-data/
+data/*
+!data/randbats/
 artifacts/
-checkpoints/
-models/
-wandb/
+logs/
+arena/
+replays/
 .cache/
 
 # Local course material
