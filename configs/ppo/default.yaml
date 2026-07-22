@@ -1,0 +1,17 @@
+seed: 20260721
+learning_rate: 0.0003
+gamma: 0.99
+entropy_coefficient: 0.01
+batch_size: 128
+rollout_steps_total: 3072
+parallel_environments: 8
+reward:
+  victory: 30.0
+  fainted: 2.0
+  hp: 1.0
+  status: 0.5
+curriculum:
+  - random
+  - max-base-power
+  - simple-heuristic
+  - custom-heuristic

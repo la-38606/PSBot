@@ -1,0 +1,9 @@
+schema_version: 1
+format: gen9randombattle
+pilot_battles: 500
+minimum_rating: 1500
+fallback_minimum_rating: 1400
+maximum_battles: 25000
+request_delay_seconds: 1.0
+raw_directory: data/raw/replays
+processed_directory: data/processed/replays

@@ -1,0 +1,7 @@
+schema_version: 1
+format: gen9randombattle
+battles: 1000
+max_concurrent_battles: 8
+seed: 20260721
+save_replays: true
+output_directory: data/raw/selfplay

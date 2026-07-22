@@ -2,6 +2,7 @@
 .env
 .env.*
 !.env.example
+.venv/
 
 # OS metadata
 .DS_Store
@@ -17,16 +18,28 @@ Thumbs.db
 *.log
 *.tmp
 *.temp
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+build/
+dist/
+*.egg-info/
 
 # Generated data and experiment artifacts
-tmp/
-data/*
-!data/randbats/
-artifacts/
-logs/
-arena/
-replays/
-.cache/
+/tmp/
+/data/
+/artifacts/
+/checkpoints/
+/models/
+/wandb/
+/.cache/
+/logs/
+/replays/
+/arena/
 
 # Local course material
 PDF document.pdf

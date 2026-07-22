@@ -1,0 +1,11 @@
+services:
+  showdown:
+    build:
+      context: .
+      dockerfile: infra/showdown/Dockerfile
+      args:
+        SHOWDOWN_COMMIT: f2fe71c8754edf140b2ca95fb3f41222404f2936
+    init: true
+    ports:
+      - "8000:8000"
+    restart: unless-stopped

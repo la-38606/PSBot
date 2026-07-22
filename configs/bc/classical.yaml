@@ -1,0 +1,5 @@
+seed: 20260721
+model: multinomial_logistic_regression
+regularization_c: 1.0
+maximum_iterations: 1000
+split_by_battle: true
