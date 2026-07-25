@@ -12,7 +12,19 @@ See the [month-one project plan](PROJECT_PLAN.md) for the architecture, technolo
 uv sync --extra ml
 docker compose up --build -d showdown
 uv run psbot doctor
+uv run psbot smoke   # one random-vs-random battle against the local server
 uv run pytest
 ```
 
 The simulator is pinned in Docker, generated data and models remain outside Git, and all public commands are available through `uv run psbot --help`.
+
+### Without Docker
+
+On machines without Docker, run the simulator as a native Node checkout pinned to the same commit as the Docker image (requires `brew install node@22`):
+
+```bash
+make showdown-native-setup   # one-time: clone, pin, npm ci (~/pokemon-showdown)
+make showdown-native         # start the server on port 8000 (foreground)
+```
+
+`psbot doctor` and `psbot smoke` work identically against either server.

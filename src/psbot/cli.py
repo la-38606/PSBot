@@ -101,6 +101,22 @@ def doctor(
     typer.echo("PSBot doctor passed.")
 
 
+@app.command()
+def smoke() -> None:
+    """Run one random-vs-random battle against the local server."""
+
+    import asyncio
+
+    from psbot.battle.smoke import run_smoke_battle
+
+    result = asyncio.run(run_smoke_battle())
+    typer.echo(
+        f"Battle {result.battle_id} finished in {result.turns} turns; "
+        f"winner: {result.winner or 'tie'} "
+        f"({result.player_a} vs {result.player_b})"
+    )
+
+
 @collect_app.command("selfplay")
 def collect_selfplay(
     config: Annotated[Path, typer.Option()] = Path("configs/data/selfplay.yaml"),
