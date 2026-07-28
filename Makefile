@@ -19,6 +19,12 @@ test:
 doctor:
 	uv run psbot doctor
 
+# iCloud-synced folders (Desktop/Documents) mark .venv contents hidden, and
+# Python >= 3.11.9 silently skips hidden .pth files, breaking `import psbot`.
+# Run this whenever the venv mysteriously stops finding the package.
+repair-venv:
+	chflags -R nohidden .venv
+
 smoke:
 	uv run psbot smoke
 

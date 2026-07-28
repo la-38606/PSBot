@@ -11,6 +11,7 @@ from typing import Annotated
 import httpx
 import typer
 
+from psbot.agents.baselines import BaselineName
 from psbot.config import Settings
 from psbot.constants import BATTLE_FORMAT, SHOWDOWN_COMMIT
 
@@ -169,11 +170,27 @@ def train_ppo(config: Annotated[Path, typer.Option()] = Path("configs/ppo/defaul
 
 @evaluate_app.command("tournament")
 def evaluate_tournament(
-    config: Annotated[Path, typer.Option()] = Path("configs/evaluation/default.yaml"),
+    a: Annotated[
+        BaselineName,
+        typer.Option(help="First agent; results are reported from this side."),
+    ] = BaselineName.MAX_BASE_POWER,
+    b: Annotated[
+        BaselineName,
+        typer.Option(help="Second agent."),
+    ] = BaselineName.RANDOM,
+    n: Annotated[int, typer.Option(min=1, help="Number of battles.")] = 100,
 ) -> None:
-    """Run a frozen local tournament."""
+    """Run an N-battle head-to-head between two baseline agents."""
 
-    _planned(f"Tournament evaluation with {config}")
+    import asyncio
+
+    from psbot.evaluation.tournament import run_tournament
+
+    result = asyncio.run(run_tournament(a, b, n))
+    typer.echo(
+        f"{result.agent_a} vs {result.agent_b}: {result.wins_a}/{result.games} "
+        f"({result.win_rate_a:.1%}, 95% CI {result.ci_low:.1%}-{result.ci_high:.1%})"
+    )
 
 
 @ladder_app.command("run")
