@@ -12,7 +12,7 @@ from typing import Annotated
 import httpx
 import typer
 
-from psbot.battle.smoke import run_smoke_battle
+from psbot.agents.baselines import BaselineName
 from psbot.config import Settings
 from psbot.constants import BATTLE_FORMAT, SHOWDOWN_COMMIT
 
@@ -105,16 +105,20 @@ def doctor(
     typer.echo("PSBot doctor passed.")
 
 
-@battle_app.command("smoke")
-def battle_smoke() -> None:
-    """Play one random-vs-random battle on the local server."""
+@app.command()
+def smoke() -> None:
+    """Run one random-vs-random battle against the local server."""
+
+    import asyncio
+
+    from psbot.battle.smoke import run_smoke_battle
 
     result = asyncio.run(run_smoke_battle())
-
-    typer.echo(f"Battle ID: {result.battle_id}")
-    typer.echo(f"Players: {result.player_a} vs {result.player_b}")
-    typer.echo(f"Winner: {result.winner or 'tie'}")
-    typer.echo(f"Turns: {result.turns}")
+    typer.echo(
+        f"Battle {result.battle_id} finished in {result.turns} turns; "
+        f"winner: {result.winner or 'tie'} "
+        f"({result.player_a} vs {result.player_b})"
+    )
 
 
 @collect_app.command("selfplay")
@@ -169,11 +173,27 @@ def train_ppo(config: Annotated[Path, typer.Option()] = Path("configs/ppo/defaul
 
 @evaluate_app.command("tournament")
 def evaluate_tournament(
-    config: Annotated[Path, typer.Option()] = Path("configs/evaluation/default.yaml"),
+    a: Annotated[
+        BaselineName,
+        typer.Option(help="First agent; results are reported from this side."),
+    ] = BaselineName.MAX_BASE_POWER,
+    b: Annotated[
+        BaselineName,
+        typer.Option(help="Second agent."),
+    ] = BaselineName.RANDOM,
+    n: Annotated[int, typer.Option(min=1, help="Number of battles.")] = 100,
 ) -> None:
-    """Run a frozen local tournament."""
+    """Run an N-battle head-to-head between two baseline agents."""
 
-    _planned(f"Tournament evaluation with {config}")
+    import asyncio
+
+    from psbot.evaluation.tournament import run_tournament
+
+    result = asyncio.run(run_tournament(a, b, n))
+    typer.echo(
+        f"{result.agent_a} vs {result.agent_b}: {result.wins_a}/{result.games} "
+        f"({result.win_rate_a:.1%}, 95% CI {result.ci_low:.1%}-{result.ci_high:.1%})"
+    )
 
 
 @ladder_app.command("run")

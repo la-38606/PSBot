@@ -9,7 +9,7 @@ runner = CliRunner()
 def test_help_lists_public_command_groups() -> None:
     result = runner.invoke(app, ["--help"])
     assert result.exit_code == 0
-    for command in ("doctor", "battle", "collect", "replays", "train", "evaluate", "ladder"):
+    for command in ("doctor", "smoke", "collect", "replays", "train", "evaluate", "ladder"):
         assert command in result.stdout
 
 
