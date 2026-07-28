@@ -105,7 +105,12 @@ def doctor(
 
 
 @app.command()
-def smoke() -> None:
+def smoke(
+    output: Annotated[
+        Path | None,
+        typer.Option(dir_okay=False, help="Optional JSON result path."),
+    ] = None,
+) -> None:
     """Run one random-vs-random battle against the local server."""
 
     import asyncio
@@ -118,6 +123,11 @@ def smoke() -> None:
         f"winner: {result.winner or 'tie'} "
         f"({result.player_a} vs {result.player_b})"
     )
+    if output is not None:
+        from psbot.data.smoke_record import save_smoke_result
+
+        saved_path = save_smoke_result(result, output)
+        typer.echo(f"Saved result to {saved_path}")
 
 
 @collect_app.command("selfplay")
@@ -181,6 +191,10 @@ def evaluate_tournament(
         typer.Option(help="Second agent."),
     ] = BaselineName.RANDOM,
     n: Annotated[int, typer.Option(min=1, help="Number of battles.")] = 100,
+    output: Annotated[
+        Path | None,
+        typer.Option(dir_okay=False, help="Optional JSON result path."),
+    ] = None,
 ) -> None:
     """Run an N-battle head-to-head between two baseline agents."""
 
@@ -193,6 +207,11 @@ def evaluate_tournament(
         f"{result.agent_a} vs {result.agent_b}: {result.wins_a}/{result.games} "
         f"({result.win_rate_a:.1%}, 95% CI {result.ci_low:.1%}-{result.ci_high:.1%})"
     )
+    if output is not None:
+        from psbot.data.tournament_record import save_tournament_result
+
+        saved_path = save_tournament_result(result, output)
+        typer.echo(f"Saved result to {saved_path}")
 
 
 @ladder_app.command("run")

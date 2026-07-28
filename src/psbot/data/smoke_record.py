@@ -1,8 +1,8 @@
-import json
 from dataclasses import asdict
 from pathlib import Path
 
 from psbot.battle.smoke import SmokeBattleResult
+from psbot.data.json_record import write_json_record
 
 
 def save_smoke_result(
@@ -11,13 +11,4 @@ def save_smoke_result(
 ) -> Path:
     """Write a smoke-battle result to a JSON file."""
 
-    destination.parent.mkdir(parents=True, exist_ok=True)
-
-    result_dict = asdict(result)
-
-    destination.write_text(
-        json.dumps(result_dict, indent=2) + "\n",
-        encoding="utf-8",
-    )
-
-    return destination
+    return write_json_record(asdict(result), destination)

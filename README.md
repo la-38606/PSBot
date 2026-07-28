@@ -18,6 +18,14 @@ uv run pytest
 
 The simulator is pinned in Docker, generated data and models remain outside Git, and all public commands are available through `uv run psbot --help`.
 
+Persist smoke and tournament summaries as JSON when needed:
+
+```bash
+uv run psbot smoke --output logs/smoke/latest.json
+uv run psbot evaluate tournament --a max-base-power --b random --n 100 \
+  --output logs/tournaments/max-vs-random.json
+```
+
 ### Without Docker
 
 On machines without Docker, run the simulator as a native Node checkout pinned to the same commit as the Docker image (requires `brew install node@22`):
