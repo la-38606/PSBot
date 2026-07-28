@@ -1,9 +1,12 @@
+import re
+
 from typer.testing import CliRunner
 
 from psbot.cli import app
 from psbot.evaluation.tournament import TournamentResult
 
 runner = CliRunner()
+ANSI_ESCAPE_RE = re.compile(r"\x1b(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])")
 
 
 def test_tournament_help_lists_options() -> None:
@@ -13,8 +16,9 @@ def test_tournament_help_lists_options() -> None:
         env={"FORCE_COLOR": None, "NO_COLOR": "1"},
     )
     assert result.exit_code == 0
+    plain_output = ANSI_ESCAPE_RE.sub("", result.stdout)
     for option in ("--a", "--b", "--n"):
-        assert option in result.stdout
+        assert option in plain_output
 
 
 def test_tournament_rejects_unknown_baseline() -> None:
