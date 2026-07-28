@@ -29,12 +29,12 @@ def test_battle_smoke_reports_result(monkeypatch) -> None:
             player_b="PSBotB",
         )
 
-    monkeypatch.setattr("psbot.cli.run_smoke_battle", fake_smoke_battle)
+    monkeypatch.setattr("psbot.battle.smoke.run_smoke_battle", fake_smoke_battle)
 
-    result = runner.invoke(app, ["battle", "smoke"])
+    result = runner.invoke(app, ["smoke"])
 
     assert result.exit_code == 0, result.stdout
-    assert "Battle ID: battle-gen9randombattle-test" in result.stdout
-    assert "Players: PSBotA vs PSBotB" in result.stdout
-    assert "Winner: PSBotA" in result.stdout
-    assert "Turns: 23" in result.stdout
+    assert (
+        "Battle battle-gen9randombattle-test finished in 23 turns; "
+        "winner: PSBotA (PSBotA vs PSBotB)"
+    ) in result.stdout
