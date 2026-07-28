@@ -6,19 +6,22 @@ from psbot.cli import app
 from psbot.evaluation.tournament import TournamentResult
 
 runner = CliRunner()
-ANSI_ESCAPE_RE = re.compile(r"\x1b(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])")
+
+_ANSI = re.compile(r"\x1b\[[0-9;]*m")
+
+
+def _plain(text: str) -> str:
+    """Strip ANSI style codes so help-text assertions hold with color on or off."""
+
+    return _ANSI.sub("", text)
 
 
 def test_tournament_help_lists_options() -> None:
-    result = runner.invoke(
-        app,
-        ["evaluate", "tournament", "--help"],
-        env={"FORCE_COLOR": None, "NO_COLOR": "1"},
-    )
+    result = runner.invoke(app, ["evaluate", "tournament", "--help"])
     assert result.exit_code == 0
-    plain_output = ANSI_ESCAPE_RE.sub("", result.stdout)
+    stdout = _plain(result.stdout)
     for option in ("--a", "--b", "--n"):
-        assert option in plain_output
+        assert option in stdout
 
 
 def test_tournament_rejects_unknown_baseline() -> None:
