@@ -7,7 +7,11 @@ runner = CliRunner()
 
 
 def test_tournament_help_lists_options() -> None:
-    result = runner.invoke(app, ["evaluate", "tournament", "--help"])
+    result = runner.invoke(
+        app,
+        ["evaluate", "tournament", "--help"],
+        env={"FORCE_COLOR": None, "NO_COLOR": "1"},
+    )
     assert result.exit_code == 0
     for option in ("--a", "--b", "--n"):
         assert option in result.stdout
