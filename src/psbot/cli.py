@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import importlib.metadata
 import platform
 import sys
@@ -11,16 +12,19 @@ from typing import Annotated
 import httpx
 import typer
 
+from psbot.battle.smoke import run_smoke_battle
 from psbot.config import Settings
 from psbot.constants import BATTLE_FORMAT, SHOWDOWN_COMMIT
 
 app = typer.Typer(no_args_is_help=True, help="Build, train, and evaluate PSBot.")
+battle_app = typer.Typer(no_args_is_help=True, help="Run local battle smoke tests.")
 collect_app = typer.Typer(no_args_is_help=True, help="Collect battle trajectories.")
 replays_app = typer.Typer(no_args_is_help=True, help="Fetch and reconstruct human replays.")
 train_app = typer.Typer(no_args_is_help=True, help="Train classical, BC, and PPO models.")
 evaluate_app = typer.Typer(no_args_is_help=True, help="Evaluate agents reproducibly.")
 ladder_app = typer.Typer(no_args_is_help=True, help="Run a locked agent on the public ladder.")
 
+app.add_typer(battle_app, name="battle")
 app.add_typer(collect_app, name="collect")
 app.add_typer(replays_app, name="replays")
 app.add_typer(train_app, name="train")
@@ -99,6 +103,18 @@ def doctor(
         raise typer.Exit(code=1)
 
     typer.echo("PSBot doctor passed.")
+
+
+@battle_app.command("smoke")
+def battle_smoke() -> None:
+    """Play one random-vs-random battle on the local server."""
+
+    result = asyncio.run(run_smoke_battle())
+
+    typer.echo(f"Battle ID: {result.battle_id}")
+    typer.echo(f"Players: {result.player_a} vs {result.player_b}")
+    typer.echo(f"Winner: {result.winner or 'tie'}")
+    typer.echo(f"Turns: {result.turns}")
 
 
 @collect_app.command("selfplay")
